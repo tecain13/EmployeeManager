@@ -7,7 +7,7 @@ require("console.table");
 initialize();
 
 
-
+// Display logo text, load main prompts
 function initialize() {
     const logoText = logo({ name: "Employee Manager" }).render();
     console.log(logoText);
@@ -70,35 +70,35 @@ async function mainOptions() {
     // Call the appropriate function depending on what the user chose
     switch (choice) {
         case "VIEW_ALL_EMPLOYEES":
-            return viewAllEmployees();
+            return displayAllEmployees();
         case "VIEW_EMPLOYEES_BY_DEPARTMENT":
-            return viewEmployeesByDepartment();
+            return displayEmployeesByDepartment();
         case "VIEW_EMPLOYEES_BY_MANAGER":
-            return viewEmployeesByManager();
+            return displayEmployeesByManager();
         case "ADD_EMPLOYEE":
-            return addEmployee();
+            return newEmployee();
         case "UPDATE_EMPLOYEE_ROLE":
             return updateEmployeeRole();
         case "VIEW_DEPARTMENTS":
-            return viewDepartments();
+            return displayDepartments();
         case "ADD_DEPARTMENT":
-            return addDepartment();
+            return newDepartment();
         case "VIEW_ROLES":
-            return viewRoles();
+            return displayRoles();
         case "ADD_ROLE":
-            return addRole();
+            return newRole();
         default:
-            return quit();
+            return exit();
     }
 }
-async function viewAllEmployees() {
-    const employees = await db.findAllEmployees();
+async function displayAllEmployees() {
+    const employees = await db.grabAllEmployees();
     console.log("\n");
     console.table(employees);
     mainOptions();
 }
-async function viewEmployeesByDepartment() {
-    const departments = await db.findAllDepartments();
+async function displayEmployeesByDepartment() {
+    const departments = await db.grabAllDepartments();
     const departmentChoices = departments.map(({ id, name }) => ({
         name: name,
         value: id
@@ -111,13 +111,13 @@ async function viewEmployeesByDepartment() {
             choices: departmentChoices
         }
     ]);
-    const employees = await db.findAllEmployeesByDepartment(departmentId);
+    const employees = await db.grabAllEmployeesByDepartment(departmentId);
     console.log("\n");
     console.table(employees);
     mainOptions();
 }
-async function viewEmployeesByManager() {
-    const managers = await db.findAllEmployees();
+async function displayEmployeesByManager() {
+    const managers = await db.grabAllEmployees();
     const managerChoices = managers.map(({ id, first_name, last_name }) => ({
         name: `${first_name} ${last_name}`,
         value: id
@@ -130,7 +130,7 @@ async function viewEmployeesByManager() {
             choices: managerChoices
         }
     ]);
-    const employees = await db.findAllEmployeesByManager(managerId);
+    const employees = await db.grabAllEmployeesByManager(managerId);
     console.log("\n");
     if (employees.length === 0) {
         console.log("The selected employee has no direct reports");
@@ -141,7 +141,7 @@ async function viewEmployeesByManager() {
 }
 
 async function updateEmployeeRole() {
-    const employees = await db.findAllEmployees();
+    const employees = await db.grabAllEmployees();
     const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
         name: `${first_name} ${last_name}`,
         value: id
@@ -154,7 +154,7 @@ async function updateEmployeeRole() {
             choices: employeeChoices
         }
     ]);
-    const roles = await db.findAllRoles();
+    const roles = await db.grabAllRoles();
     const roleChoices = roles.map(({ id, title }) => ({
         name: title,
         value: id
@@ -172,14 +172,14 @@ async function updateEmployeeRole() {
     mainOptions();
 }
 
-async function viewRoles() {
-    const roles = await db.findAllRoles();
+async function displayRoles() {
+    const roles = await db.grabAllRoles();
     console.log("\n");
     console.table(roles);
     mainOptions();
 }
-async function addRole() {
-    const departments = await db.findAllDepartments();
+async function newRole() {
+    const departments = await db.grabAllDepartments();
     const departmentChoices = departments.map(({ id, name }) => ({
         name: name,
         value: id
@@ -205,13 +205,13 @@ async function addRole() {
     mainOptions();
 }
 
-async function viewDepartments() {
-    const departments = await db.findAllDepartments();
+async function displayDepartments() {
+    const departments = await db.grabAllDepartments();
     console.log("\n");
     console.table(departments);
     mainOptions();
 }
-async function addDepartment() {
+async function newDepartment() {
     const department = await prompt([
         {
             name: "name",
@@ -223,9 +223,9 @@ async function addDepartment() {
     mainOptions();
 }
 
-async function addEmployee() {
-    const roles = await db.findAllRoles();
-    const employees = await db.findAllEmployees();
+async function newEmployee() {
+    const roles = await db.grabAllRoles();
+    const employees = await db.grabAllEmployees();
     const employee = await prompt([
         {
             name: "first_name",
@@ -265,7 +265,7 @@ async function addEmployee() {
     );
     mainOptions();
 }
-function quit() {
-    console.log("Goodbye!");
+function exit() {
+    console.log("See you next time!");
     process.exit();
 }
