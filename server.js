@@ -178,6 +178,7 @@ async function displayRoles() {
     console.table(roles);
     mainOptions();
 }
+
 async function newRole() {
     const departments = await db.grabAllDepartments();
     const departmentChoices = departments.map(({ id, name }) => ({
@@ -211,6 +212,7 @@ async function displayDepartments() {
     console.table(departments);
     mainOptions();
 }
+
 async function newDepartment() {
     const department = await prompt([
         {
@@ -265,6 +267,8 @@ async function newEmployee() {
     );
     mainOptions();
 }
+
+
 function exit() {
     console.log("See you next time!");
     process.exit();
